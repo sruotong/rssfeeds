@@ -6,5 +6,5 @@ export default class FeedState {
 }
 
 export const initializeState = (): FeedState => {
-    return { Feeds: Array<FeedItem>(), Channels: Array<string>() };
+    return { Feeds: Array<FeedItem>(), Channels: ['http://feeds.bbci.co.uk/news/rss.xml', 'https://www.smh.com.au/rss/feed.xml'] };
 };

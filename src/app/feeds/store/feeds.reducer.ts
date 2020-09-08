@@ -6,7 +6,7 @@ import * as moment from 'moment';
 
 export const initialState = initializeState();
 
-const _counterReducer = createReducer(
+const _feedStateReducer = createReducer(
     initialState,
     on(addChannel, (state: FeedState, channelLink: String) => {
         return { ...state, Channels: [...state.Channels, channelLink] };
@@ -15,15 +15,15 @@ const _counterReducer = createReducer(
         return { ...state, Channels: state.Channels.filter(c => c != channelLink) }
     }),
     on(addFeed, (state: FeedState, feed: FeedItem) => {
-        feed.status = 'Added';
-        feed.updateTime = moment(new Date());
-        return { ...state, Feeds: [...state.Feeds, feed] };
+        // feed.status = 'Added';
+        // feed.updateTime = moment(new Date());
+        return { ...state, Feeds: [...state.Feeds, { ...feed, status: 'Added', updateTime: moment(new Date()) }] };
     }),
     on(deleteFeed, (state: FeedState, { payload }) => {
         return { ...state, Feeds: payload }
     })
 );
 
-export function counterReducer(state, action) {
-    return _counterReducer(state, action);
+export function FeedStateReducer(state, action) {
+    return _feedStateReducer(state, action);
 }
