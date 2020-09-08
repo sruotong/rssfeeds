@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
         HttpClientModule,
         StoreModule.forRoot({ feedState: FeedStateReducer }),
         StoreDevtoolsModule.instrument({
-            maxAge: 25,
+            maxAge: 2500,
             logOnly: environment.production,
         }),
     ],
