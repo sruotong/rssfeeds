@@ -8,13 +8,16 @@ import { RssFeed_Route } from './rss-feed.route';
 import { HttpClientModule } from '@angular/common/http';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
+import { FormsModule } from '@angular/forms';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
     declarations: [
         RssFeedComponent
     ],
     imports: [
-        BrowserModule,
+        FormsModule,
+        SharedModule,
         RouterModule.forChild([RssFeed_Route]),
         HttpClientModule,
         StoreModule.forRoot({ feedState: FeedStateReducer }),

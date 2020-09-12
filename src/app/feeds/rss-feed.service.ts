@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import FeedState from './store/feeds.state';
-import { Observable, interval, Subscription, timer } from 'rxjs';
+import { Observable, Subscription, timer, concat } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import * as xml2js from "xml2js";
 import { addFeed, deleteFeed } from './store/feeds.actions';
 import { FeedItem } from '../models/feed-item.model';
 import { FEED_STATUS } from './rss-feed.constants';
-
+import { switchMap } from 'rxjs/operators';
 @Injectable({ providedIn: 'root' })
 export class RssFeedService {
 
@@ -20,54 +20,82 @@ export class RssFeedService {
     private cycleSubscription: Subscription;
 
     constructor(private store: Store<{ feedState: FeedState }>, private http: HttpClient) {
-        store.pipe(select('feedState')).subscribe((state) => {
+        store.select('feedState').subscribe((state) => {
             this.channels = state.Channels;
             this.feeds = state.Feeds;
         });
 
-        this.pullCycle$ = timer(1000, 300000);
+        this.pullCycle$ = timer(0, 60000);
     }
 
     getRssFeedsFromChannelList() {
-        // subscribe the pullCycles
-        // every 5 minutes 
-        this.cycleSubscription = this.pullCycle$.subscribe((val) => {
-            console.log(`pulled rss feed ${val+1} times.`);
-            this.channels.forEach((channel: string) => {
-                this.http
-                    .get<any>(`https://cors-anywhere.herokuapp.com/${channel}`, { observe: "body", responseType: "text" as "json" })
-                    .subscribe(
-                        (data: HttpResponse<any>) => {
-                            let parseString = xml2js.parseString;
-                            parseString(data, (err, result: any) => {
-                                console.log(err);
-                                console.dir(result.rss.channel[0].item);
-                                let newLoads = result.rss.channel[0].item;
-                                let lastLoads = this.feeds.filter(f => f.status !== FEED_STATUS.DELETED && f.channel === result.rss.channel[0].link[0]);
+        this.cycleSubscription = this.pullCycle$.pipe(
+            switchMap(() => {
+                return concat(...this.channels.map((channel) => {
+                    return this.callRssUrls(channel)
+                }))
+            })
+        ).subscribe(
+            (data: HttpResponse<any>) => {
+                this.parseRssXML(data);
+            }, (error: HttpErrorResponse) => {
+                console.error('Rss site response error!');
+            }
+        );
+    }
 
-                                lastLoads.forEach(feed => {
-                                    if (newLoads.map(f => f.link[0]).indexOf(feed.link[0]) === -1) {
-                                        this.store.dispatch(deleteFeed(feed));
-                                    }
-                                });
+    callRssUrls(channel: string): Observable<HttpResponse<any>> {
+        return this.http
+            .get<any>(`https://cors-anywhere.herokuapp.com/${channel}`, { observe: "body", responseType: "text" as "json" });
+    }
 
-                                newLoads.forEach(feed => {
-                                    if (lastLoads.map(f => f.link[0]).indexOf(feed.link[0]) === -1) {
-                                        this.store.dispatch(addFeed({ ...feed, channel: result.rss.channel[0].link[0] }));
-                                    }
-                                });
-                            });
-                            console.log(channel);
-                        }, (error: HttpErrorResponse) => {
-                            console.log(error);
-                        }
-                    );
-            });
+    parseRssXML(data: HttpResponse<any>) {
+        xml2js.parseString(data, (err, result: any) => {
+            if (err !== null) {
+                console.error('Failed to read xml file!');
+            } else {
+                this.updateFeeds(result);
+            }
+        });
+    }
+
+    updateFeeds(result: any) {
+        let newLoads = result.rss.channel[0].item;
+        let lastLoads = this.feeds.filter(f => f.status !== FEED_STATUS.DELETED && f.channel === result.rss.channel[0].link[0]);
+        lastLoads.forEach(feed => {
+            if (newLoads.map(f => f.link[0]).indexOf(feed.link) === -1) {
+                this.store.dispatch(deleteFeed(feed));
+            }
+        });
+        newLoads.forEach(feed => {
+            if (lastLoads.map(f => f.link).indexOf(feed.link[0]) === -1) {
+                this.store.dispatch(addFeed({ ...feed, description: feed.description[0], link: feed.link[0], pubDate: feed.pubDate[0], title: feed.title[0], channel: result.rss.channel[0].link[0] }));
+            }
         });
     }
 
     unSubscribeCycle() {
         this.cycleSubscription.unsubscribe();
+    }
+
+    // basically for testing 
+    getChannels(): Array<string> {
+        return this.channels;
+    }
+
+    // basically for testing 
+    getFeeds(): Array<FeedItem> {
+        return this.feeds;
+    }
+
+    // basically for testing
+    getPullCycle(): Observable<number> {
+        return this.pullCycle$;
+    }
+
+    // basically for testing
+    getCycleSubscription(): Subscription {
+        return this.cycleSubscription;
     }
 
 }

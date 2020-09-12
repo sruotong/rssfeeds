@@ -1,3 +1,55 @@
-<p>
-  rssfeed works!
-</p>
+<div class="row justify-content-center">
+  <div class="col-md-6 col-sm-12">
+    <div class="card">
+      <div class="d-flex justify-content-between mb-2">
+        <button class="btn btn-sm btn-outline-primary" name="channelButton"
+          (click)="disCompWith=='CHANNEL_LIST'?disCompWith='FEED_LIST':disCompWith='CHANNEL_LIST'">{{disCompWith=='CHANNEL_LIST'?'Back':'List'}}</button>
+        <h4>{{disCompWith=='FEED_LIST'?'Rss Feeds':(disCompWith=='CHANNEL_LIST'?'Channels':'Logs')}}</h4>
+        <button class="btn btn-sm btn-outline-secondary" name="logsButton"
+          (click)="disCompWith=='FEED_LOGS'?disCompWith='FEED_LIST':disCompWith='FEED_LOGS'">{{disCompWith=='FEED_LOGS'?'Back':'Logs'}}</button>
+      </div>
+    </div>
+    <div [ngSwitch]="disCompWith">
+      <div *ngSwitchCase="'CHANNEL_LIST'">
+        <div class="card channel-list-card">
+          <div class="input-group mb-3">
+            <input type="text" lowercase class="form-control" placeholder="New Rss Url" [(ngModel)]="newChannel">
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" type="button" name="addChannelButton" (click)="onAddingNewChannel()">Add</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" *ngFor="let channel of channels; let i = index">
+          <div class="d-flex justify-content-between mb-2">
+            <p>{{channel}}</p>
+            <button class="btn btn-sm btn-outline-danger" type="button" name="removeChannelButton" (click)="onRemovingChannel(i)">Remove</button>
+          </div>
+        </div>
+      </div>
+      <div *ngSwitchCase="'FEED_LIST'">
+        <div class="card feed-list-card" *ngFor="let feed of feeds">
+          <h5>{{feed.title}}</h5>
+          <p>{{feed.description}}</p>
+          <div class="d-flex justify-content-between">
+            <p>{{feed.pubDate | date:'medium'}}, {{feed.channel}}</p>
+            <a [href]="feed.link">More</a>
+          </div>
+        </div>
+      </div>
+      <div *ngSwitchCase="'FEED_LOGS'">
+        <div class="card feed-logs-card" *ngFor="let feed of feedLogs">
+          <h5>{{feed.title}}</h5>
+          <span *ngIf="feed.status=='ADDED'" class="badge badge-success">{{feed.updateTime | date:'medium'}}
+            Added</span>
+          <span *ngIf="feed.status=='DELETED'" class="badge badge-danger">{{feed.updateTime | date:'medium'}}
+            Removed</span>
+          <p>{{feed.description}}</p>
+          <div class="d-flex justify-content-between">
+            <p>{{feed.pubDate | date:'medium'}}, {{feed.channel}}</p>
+            <a [href]="feed.link">More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
