@@ -13,7 +13,7 @@ const _feedStateReducer = createReducer(
         return { ...state, Channels: [...state.Channels, channel] };
     }),
     on(deleteChannel, (state: FeedState, { channel }) => {
-        return { ...state, Channels: [...state.Channels.filter(c => c != channel)] }
+        return { Feeds: [...state.Feeds.map(f => f.rssUrl === channel ? ({ ...f, status: FEED_STATUS.DELETED, updateTime: moment(new Date()) }) : f)], Channels: [...state.Channels.filter(c => c != channel)] }
     }),
     on(addFeed, (state: FeedState, feed: FeedItem) => {
         return { ...state, Feeds: [...state.Feeds, { ...feed, status: FEED_STATUS.ADDED, updateTime: moment(new Date()) }] };

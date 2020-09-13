@@ -25,7 +25,8 @@ describe('RssFeedComponent', () => {
             link: 'link1',
             status: '',
             updateTime: moment(new Date()),
-            pubDate: moment(new Date())
+            pubDate: moment(new Date()),
+            rssUrl: 'a fake rss url'
         },
         {
             channel: 'channel-2',
@@ -34,7 +35,8 @@ describe('RssFeedComponent', () => {
             link: 'link2',
             status: '',
             updateTime: moment(new Date()),
-            pubDate: moment(new Date())
+            pubDate: moment(new Date()),
+            rssUrl: 'a fake rss url'
         },
         {
             channel: 'channel-1',
@@ -43,7 +45,8 @@ describe('RssFeedComponent', () => {
             link: 'link3',
             status: '',
             updateTime: moment(new Date()),
-            pubDate: moment(new Date())
+            pubDate: moment(new Date()),
+            rssUrl: 'a fake rss url'
         }
     ];
 
@@ -284,8 +287,6 @@ describe('RssFeedComponent', () => {
             describe('test add/remove channel functions', () => {
                 it('should not update channel list, when new channel string in null', () => {
                     spyOn(store, 'dispatch').and.callThrough();
-                    // spyOn(store, 'addChannelActionMock');
-                    // spyOn(store, 'deleteChannelActionMock');
                     component.newChannel = '';
                     component.onAddingNewChannel();
 

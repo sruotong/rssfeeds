@@ -21,7 +21,8 @@ describe('RssFeed Service', () => {
             link: 'link1',
             status: FEED_STATUS.ADDED,
             updateTime: moment(new Date()),
-            pubDate: moment(new Date())
+            pubDate: moment(new Date()),
+            rssUrl: 'a fake rss url'
         },
         {
             channel: 'channel-1',
@@ -30,7 +31,8 @@ describe('RssFeed Service', () => {
             link: 'link2',
             status: FEED_STATUS.ADDED,
             updateTime: moment(new Date()),
-            pubDate: moment(new Date())
+            pubDate: moment(new Date()),
+            rssUrl: 'a fake rss url'
         },
         {
             channel: 'channel-1',
@@ -39,7 +41,8 @@ describe('RssFeed Service', () => {
             link: 'link3',
             status: FEED_STATUS.ADDED,
             updateTime: moment(new Date()),
-            pubDate: moment(new Date())
+            pubDate: moment(new Date()),
+            rssUrl: 'a fake rss url'
         }
     ];
     beforeEach(async(() => {
@@ -96,7 +99,7 @@ describe('RssFeed Service', () => {
     describe('test calling rss url', () => {
 
         it('should call rss url, when calling callrssurls function', () => {
-            spyOn(http, 'get');
+            spyOn(http, 'get').and.returnValue(of('a fake xml'));
             service.callRssUrls('url');
             expect(http.get).toHaveBeenCalled();
         })
@@ -170,7 +173,7 @@ describe('RssFeed Service', () => {
                     pubDate: [moment(new Date())]
                 }
             ];
-            service.updateFeeds({ rss: { channel: [{ item: [...testResult], link: ['channel-1'] }] } });
+            service.updateFeeds('A FAKE RSS URL', { rss: { channel: [{ item: [...testResult], link: ['channel-1'] }] } });
 
             // should call deleteFeedAction
             // when the old feeds from same resource as the rss xml
@@ -211,7 +214,7 @@ describe('RssFeed Service', () => {
                     pubDate: [moment(new Date())]
                 }
             ];
-            service.updateFeeds({ rss: { channel: [{ item: [...testResult], link: ['channel-2'] }] } });
+            service.updateFeeds('A FAKE RSS URL', { rss: { channel: [{ item: [...testResult], link: ['channel-2'] }] } });
 
             // should not call deleteFeedAction
             // because there is not history feeds from channel1

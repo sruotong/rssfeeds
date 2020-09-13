@@ -2,9 +2,9 @@ import { of, Subject, BehaviorSubject } from "rxjs";
 
 export class storeMock {
 
-    // a behaviorsubject variable to 
+    // a behaviorsubject variable initialed with 0 feeds and 2 channels
     // and it should be readonly
-    // should setup value by next() function
+    // setup value by next() function
     readonly aStateObj$: BehaviorSubject<any> = new BehaviorSubject<any>({ Feeds: [], Channels: ['http://feeds.bbci.co.uk/news/rss.xml', 'https://www.smh.com.au/rss/feed.xml'] });
     constructor() { }
 

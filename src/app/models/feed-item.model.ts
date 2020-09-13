@@ -9,6 +9,7 @@ export class FeedItem {
         public title: string,
         public description: string,
         public link: string,
-        public pubDate: Moment
+        public pubDate: Moment,
+        public rssUrl: string
     ) { }
 }

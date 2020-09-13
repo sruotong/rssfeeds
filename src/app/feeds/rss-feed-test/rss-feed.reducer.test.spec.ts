@@ -16,7 +16,8 @@ describe('RssFeed Reducer', () => {
                 link: 'link1',
                 status: FEED_STATUS.ADDED,
                 updateTime: moment(new Date()),
-                pubDate: moment(new Date())
+                pubDate: moment(new Date()),
+                rssUrl: 'a fake rss url'
             },
             {
                 channel: 'channel-1',
@@ -25,7 +26,8 @@ describe('RssFeed Reducer', () => {
                 link: 'link2',
                 status: FEED_STATUS.ADDED,
                 updateTime: moment(new Date()),
-                pubDate: moment(new Date())
+                pubDate: moment(new Date()),
+                rssUrl: 'a fake rss url'
             },
             {
                 channel: 'channel-1',
@@ -34,7 +36,8 @@ describe('RssFeed Reducer', () => {
                 link: 'link3',
                 status: FEED_STATUS.ADDED,
                 updateTime: moment(new Date()),
-                pubDate: moment(new Date())
+                pubDate: moment(new Date()),
+                rssUrl: 'a fake rss url'
             }
         ]
     };
@@ -62,6 +65,10 @@ describe('RssFeed Reducer', () => {
                 // add a new channel first
                 expect(FeedStateReducer(testState, { channel: 'this-is-a-new-test-channel', type: '[FEED] - ADD CHANNEL' }).Channels.length).toEqual(3);
                 expect(FeedStateReducer(testState, { channel: 'this-is-a-new-test-channel', type: '[FEED] - DELETE CHANNEL' })).toEqual(testState);
+            });
+
+            it('should update feeds status, when the channel deleted', () => {
+                expect(FeedStateReducer(testState, { channel: 'a fake rss url', type: '[FEED] - DELETE CHANNEL' }).Feeds.map(f => f.status).filter(f => f === FEED_STATUS.ADDED).length).toEqual(0);
             });
         });
 
