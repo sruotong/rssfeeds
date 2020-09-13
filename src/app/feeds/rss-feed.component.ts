@@ -14,7 +14,7 @@ import { addChannel, deleteChannel } from './store/feeds.actions';
     styleUrls: ['./rss-feed.component.css']
 })
 export class RssFeedComponent implements OnInit, OnDestroy {
-    // a subscription property for later unsubscribe when component destroied
+    // a subscription property for later unsubscribe when component destroyed
     feedStateSubscription: Subscription;
 
     // start properties from states
@@ -24,10 +24,10 @@ export class RssFeedComponent implements OnInit, OnDestroy {
     feeds: Array<FeedItem>;
     // feed logs for a list of the feeds activities
     feedLogs: Array<FeedItem>;
-    // end properties fromo states
+    // end properties from states
 
     // 'display component with'
-    // this component dispay play with three different types;
+    // this component display play with three different types;
     // @opt CHANNEL_LIST, display the channel list, add/delete button and input field
     // @opt FEED_LIST, display the lastest feeds from subscribed channels
     // @opt FEED_LOGS, display the history of the feeds, will show the status and update time for each feed
@@ -58,9 +58,10 @@ export class RssFeedComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        // init new channel input box as empty.
         this.newChannel = '';
 
-        // default 
+        // default view should be feed list
         this.disCompWith = 'FEED_LIST';
 
         // start to getting rss feeds

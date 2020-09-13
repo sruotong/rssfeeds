@@ -34,7 +34,7 @@ export class storeMock {
     // expect(store.addFeedActionMock).toHaveBeenCalledTimes(0);
     addFeedActionMock() { }
 
-    deleteFeedActionMock(link: string) { }
+    deleteFeedActionMock(link: string) { } 
 
     addChannelActionMock(channel: string) { }
 
