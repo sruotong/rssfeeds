@@ -12,7 +12,7 @@ Then run `npm start` to run developer version. for a dev server. Navigate to `ht
 
 Run `npm install` after clone.
 
-Run `npm build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 ## Running unit tests
 
